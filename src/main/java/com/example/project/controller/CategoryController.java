@@ -2,10 +2,7 @@ package com.example.project.controller;
 
 import com.example.project.model.Category;
 import com.example.project.service.CategoryService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,5 +25,10 @@ public class CategoryController {
     public String createCategory(@RequestBody Category category) {
         categoryService.createCategory(category);
         return "Category created";
+    }
+
+    @DeleteMapping("api/admin/categories/{categoryId}")
+    public String deleteCategory(@PathVariable Long categoryId) {
+        return categoryService.deleteCategory(categoryId);
     }
 }

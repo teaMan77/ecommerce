@@ -1,5 +1,6 @@
 package com.example.project.service;
 
+import com.example.project.exceptions.APIException;
 import com.example.project.exceptions.ResourceNotFoundException;
 import com.example.project.model.Category;
 import com.example.project.repository.CategoryRepository;
@@ -25,6 +26,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void createCategory(Category category) {
+        Category existingCategory = categoryRepository.findByCategoryName(category.getCategoryName());
+
+        if (existingCategory != null) {
+            throw new APIException("Category with the name " +
+                    category.getCategoryName() + " already exists !!!");
+        }
         categoryRepository.save(category);
     }
 

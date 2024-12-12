@@ -1,5 +1,6 @@
 package com.example.project.service;
 
+import com.example.project.exceptions.ResourceNotFoundException;
 import com.example.project.model.Category;
 import com.example.project.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public String deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         categoryRepository.delete(category);
         return category.getCategoryName() +
@@ -40,7 +41,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category udpateCategory(Category category, Long categoryId) {
         Category optionalCategory = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         optionalCategory.setCategoryName(category.getCategoryName());
         Category savedCategory = categoryRepository.save(optionalCategory);

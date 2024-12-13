@@ -1,5 +1,6 @@
 package com.example.project.controller;
 
+import com.example.project.config.PageConstants;
 import com.example.project.model.Category;
 import com.example.project.payload.CategoryDTO;
 import com.example.project.payload.CategoryResponse;
@@ -23,8 +24,10 @@ public class CategoryController {
 
     @GetMapping("public/categories")
     public ResponseEntity<CategoryResponse> getCategories(
-                @RequestParam(name = "pageNumber") Integer pageNumber,
-                @RequestParam(name = "pageSize") Integer pageSize) {
+                @RequestParam(name = "pageNumber", defaultValue = PageConstants.PAGE_NUMBER,
+                        required = false) Integer pageNumber,
+                @RequestParam(name = "pageSize",  defaultValue = PageConstants.PAGE_SIZE,
+                        required = false) Integer pageSize) {
         return new ResponseEntity<>(categoryService.getAllCategories(pageNumber, pageSize),
                 HttpStatus.OK);
     }

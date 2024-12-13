@@ -3,7 +3,10 @@ package com.example.project.service;
 import com.example.project.exceptions.APIException;
 import com.example.project.exceptions.ResourceNotFoundException;
 import com.example.project.model.Category;
+import com.example.project.payload.CategoryDTO;
+import com.example.project.payload.CategoryResponse;
 import com.example.project.repository.CategoryRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +18,23 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Autowired
+    ModelMapper modelMapper;
+
     @Override
-    public List<Category> getAllCategories() {
+    public CategoryResponse getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
 
         if (categories.isEmpty()) {
             throw new APIException("No categories found");
         }
-        return categories;
+
+        List<CategoryDTO> categoryDTOS = categories.stream()
+                .map(category -> modelMapper.map(category, CategoryDTO.class))
+                .toList();
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setContent(categoryDTOS);
+        return categoryResponse;
     }
 
     @Override

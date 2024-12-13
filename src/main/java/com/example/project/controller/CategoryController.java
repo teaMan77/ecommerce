@@ -1,6 +1,7 @@
 package com.example.project.controller;
 
 import com.example.project.model.Category;
+import com.example.project.payload.CategoryResponse;
 import com.example.project.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class CategoryController {
     }
 
     @GetMapping("public/categories")
-    public ResponseEntity<List<Category>> getCategories() {
+    public ResponseEntity<CategoryResponse> getCategories() {
         return new ResponseEntity<>(categoryService.getAllCategories(),
                 HttpStatus.OK);
     }

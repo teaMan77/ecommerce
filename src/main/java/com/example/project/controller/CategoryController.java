@@ -1,6 +1,7 @@
 package com.example.project.controller;
 
 import com.example.project.model.Category;
+import com.example.project.payload.CategoryDTO;
 import com.example.project.payload.CategoryResponse;
 import com.example.project.service.CategoryService;
 import jakarta.validation.Valid;
@@ -27,21 +28,21 @@ public class CategoryController {
     }
 
     @PostMapping("public/categories")
-    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category) {
-        categoryService.createCategory(category);
-        return new ResponseEntity<>("Category created", HttpStatus.OK);
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+        return new ResponseEntity<>(categoryService.createCategory(categoryDTO),
+                HttpStatus.OK);
     }
 
     @DeleteMapping("admin/categories/{categoryId}")
-    public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId) {
+    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long categoryId) {
             return new ResponseEntity(categoryService.deleteCategory(categoryId),
                     HttpStatus.OK);
     }
 
     @PutMapping("public/categories/{categoryId}")
-    public ResponseEntity<Category> updateCategory(@Valid @RequestBody Category category,
+    public ResponseEntity<CategoryDTO> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO,
                                                  @PathVariable Long categoryId) {
-            return new ResponseEntity<>(categoryService.udpateCategory(category, categoryId),
+            return new ResponseEntity<>(categoryService.udpateCategory(categoryDTO, categoryId),
                     HttpStatus.OK);
     }
 }

@@ -1,15 +1,14 @@
 package com.example.project.service;
 
-import com.example.project.model.Category;
+import com.example.project.payload.CategoryDTO;
 import com.example.project.payload.CategoryResponse;
 
-import java.util.List;
 
 public interface CategoryService {
     CategoryResponse getAllCategories();
-    void createCategory(Category category);
+    CategoryDTO createCategory(CategoryDTO categoryDTO);
 
-    String deleteCategory(Long categoryId);
+    CategoryDTO deleteCategory(Long categoryId);
 
-    Category udpateCategory(Category category, Long categoryId);
+    CategoryDTO udpateCategory(CategoryDTO categoryDTO, Long categoryId);
 }

@@ -1,5 +1,6 @@
 package com.example.project.service;
 
+import com.example.project.exceptions.APIException;
 import com.example.project.exceptions.ResourceNotFoundException;
 import com.example.project.model.Category;
 import com.example.project.model.Product;
@@ -15,10 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -43,22 +41,24 @@ public class ProductServiceImpl implements ProductService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
-        Product product = new Product();
-        product.setProductName(productDTO.getProductName());
-        product.setImage("default.png");
-        product.setDescription(productDTO.getDescription());
-        product.setQuantity(productDTO.getQuantity());
-        product.setPrice(productDTO.getPrice());
+        boolean isProductPresent = false;
+        List<Product> productsList = category.getProducts();
 
-        product.setDiscount(productDTO.getDiscount());
-        product.setSpecialPrice(productDTO.getPrice() - ((productDTO.getDiscount() / 100) * productDTO.getPrice()));
+        for (Product product : productsList) {
+            if (product.getProductName().equals(productDTO.getProductName())) {
+                isProductPresent = true;
+            }
+        }
 
-        product.setCategory(category);
-
-        productRepository.save(product);
-
-        return modelMapper.map(product, ProductDTO.class);
+        if (!isProductPresent) {
+            Product product = getProduct(productDTO, category);
+            productRepository.save(product);
+            return modelMapper.map(product, ProductDTO.class);
+        } else {
+            throw new APIException("Product already exists !!!");
+        }
     }
+
 
     @Override
     public ProductResponse getAllProducts() {
@@ -148,6 +148,21 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
 
         return modelMapper.map(product, ProductDTO.class);
+    }
+
+    private static Product getProduct(ProductDTO productDTO, Category category) {
+        Product product = new Product();
+        product.setProductName(productDTO.getProductName());
+        product.setImage("default.png");
+        product.setDescription(productDTO.getDescription());
+        product.setQuantity(productDTO.getQuantity());
+        product.setPrice(productDTO.getPrice());
+
+        product.setDiscount(productDTO.getDiscount());
+        product.setSpecialPrice(productDTO.getPrice() - ((productDTO.getDiscount() / 100) * productDTO.getPrice()));
+
+        product.setCategory(category);
+        return product;
     }
 
 }

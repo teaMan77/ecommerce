@@ -9,6 +9,7 @@ import com.example.project.repository.CategoryRepository;
 import com.example.project.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +31,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private FileService fileService;
+
+    @Value("${project.image.path}")
+    String path;
 
     @Override
     public ProductDTO addProduct(ProductDTO productDTO, Long categoryId) {
@@ -131,8 +138,8 @@ public class ProductServiceImpl implements ProductService {
 
         //Upload image to the server
         //Get the file name of the uploaded image
-        String path = "images" + File.separator + "products";
-        String fileName = uploadImage(path, image);
+        String imagePath = path + File.separator + "products";
+        String fileName = fileService.uploadImage(imagePath, image);
 
         //Updating the new filename to the product
         product.setImage(fileName);
@@ -143,23 +150,4 @@ public class ProductServiceImpl implements ProductService {
         return modelMapper.map(product, ProductDTO.class);
     }
 
-    private String uploadImage(String path, MultipartFile image) throws IOException {
-        //File name of the user uploaded image
-        String originalFilename = image.getOriginalFilename();
-
-        // Generate a unique file name
-        // mat.jpg --> 1234 --> 1234.jpg
-        String fileName = UUID.randomUUID().toString() + originalFilename.substring(originalFilename.lastIndexOf("."));
-        String filePath = path + File.separator + fileName;
-        // Check if path exist and if not create
-        File folder = new File(path);
-        if (!folder.exists())
-            folder.mkdirs();
-
-        // Upload to server
-        Files.copy(image.getInputStream(), Paths.get(filePath));
-
-        //return the filename
-        return fileName;
-    }
 }

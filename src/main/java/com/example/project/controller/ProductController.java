@@ -1,10 +1,21 @@
 package com.example.project.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.project.payload.ProductDTO;
+import com.example.project.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
 public class ProductController {
 
+    @Autowired
+    private ProductService productService;
+
+    @PostMapping("/admin/categories/{categoryId}/product")
+    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO, @PathVariable Long categoryId) {
+        return new ResponseEntity<ProductDTO>(productService.addProduct(productDTO, categoryId), HttpStatus.CREATED);
+    }
 }

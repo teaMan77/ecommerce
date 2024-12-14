@@ -1,6 +1,7 @@
 package com.example.project.controller;
 
 import com.example.project.payload.ProductDTO;
+import com.example.project.payload.ProductResponse;
 import com.example.project.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,5 +18,10 @@ public class ProductController {
     @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO, @PathVariable Long categoryId) {
         return new ResponseEntity<ProductDTO>(productService.addProduct(productDTO, categoryId), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/public/products")
+    public ResponseEntity<ProductResponse> getAllProducts() {
+        return new ResponseEntity<ProductResponse>(productService.getAllProducts(), HttpStatus.OK);
     }
 }

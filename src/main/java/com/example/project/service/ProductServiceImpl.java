@@ -4,11 +4,14 @@ import com.example.project.exceptions.ResourceNotFoundException;
 import com.example.project.model.Category;
 import com.example.project.model.Product;
 import com.example.project.payload.ProductDTO;
+import com.example.project.payload.ProductResponse;
 import com.example.project.repository.CategoryRepository;
 import com.example.project.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -42,5 +45,18 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
 
         return modelMapper.map(product, ProductDTO.class);
+    }
+
+    @Override
+    public ProductResponse getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        List<ProductDTO> productDTOS = products.stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .toList();
+
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setContent(productDTOS);
+
+        return productResponse;
     }
 }

@@ -1,7 +1,6 @@
 package com.example.project.controller;
 
 import com.example.project.config.PageConstants;
-import com.example.project.model.Category;
 import com.example.project.payload.CategoryDTO;
 import com.example.project.payload.CategoryResponse;
 import com.example.project.service.CategoryService;
@@ -9,8 +8,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -28,7 +25,7 @@ public class CategoryController {
                         required = false) Integer pageNumber,
                 @RequestParam(name = "pageSize",  defaultValue = PageConstants.PAGE_SIZE,
                         required = false) Integer pageSize,
-                @RequestParam(name = "sortBy", defaultValue = PageConstants.SORT_BY,
+                @RequestParam(name = "sortBy", defaultValue = PageConstants.SORT_CATEGORY_BY,
                         required = false) String sortBy,
                 @RequestParam(name = "sortOrder", defaultValue = PageConstants.SORT_ORDER,
                         required = false) String sortOrder) {

@@ -3,6 +3,7 @@ package com.example.project.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,6 +27,7 @@ public class Role {
         this.roleName = roleName;
     }
 
+    @ToString.Exclude
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new HashSet<>();
 }

@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,6 +14,7 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users",
 uniqueConstraints = {
         @UniqueConstraint(columnNames = "username"),
@@ -29,19 +27,19 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @NotBlank
-    @Size(min = 3, max = 20)
+    @NotBlank(message = "must not be blank")
+    @Size(min = 3, max = 20, message = "user name must be in the range of 3 to 20 characters")
     @Column(name = "username")
     private String userName;
 
-    @NotBlank
-    @Size(max = 50)
-    @Email
+    @NotBlank(message = "must not be blank")
+    @Size(max = 50, message = "email must be within 50 characters")
+    @Email(message = "Invalid email id")
     @Column(name = "email")
     private String email;
 
-    @NotBlank
-    @Size(min = 8, max = 120)
+    @NotBlank(message = "must not be blank")
+    @Size(min = 8, max = 120, message = "password must be in the range of 8 to 120 characters")
     @Column(name = "password")
     private String password;
 
@@ -60,10 +58,16 @@ public class User {
                 inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @Getter
+    @Setter
+    @ToString.Exclude
     @OneToMany(mappedBy = "seller", cascade = {CascadeType.PERSIST, CascadeType.MERGE},
                 orphanRemoval = true)
     private Set<Product> products = new HashSet<>();
 
+    @Getter
+    @Setter
+    @ToString.Exclude
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_address",
                 joinColumns = @JoinColumn(name = "user_id"),

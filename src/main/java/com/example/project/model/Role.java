@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -22,4 +25,7 @@ public class Role {
     public Role(AppRole roleName) {
         this.roleName = roleName;
     }
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users = new HashSet<>();
 }

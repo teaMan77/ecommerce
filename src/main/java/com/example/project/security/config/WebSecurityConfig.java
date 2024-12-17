@@ -1,6 +1,9 @@
 package com.example.project.security.config;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.project.model.AppRole;
+import com.example.project.model.Role;
+import com.example.project.model.User;
+import com.example.project.repository.RoleRepository;
+import com.example.project.repository.UserRepository;
 import com.example.project.security.jwt.AuthEntryPointJwt;
 import com.example.project.security.jwt.AuthTokenFilter;
 import com.example.project.security.services.UserDetailsServiceImpl;
@@ -62,6 +70,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/admin/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
@@ -70,6 +79,8 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
+
+        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -85,4 +96,69 @@ public class WebSecurityConfig {
                 "/swagger-ui.html",
                 "/webjars/**"));
     }
+
+    @Bean
+    public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
+        return args -> {
+            // Retrieve or create roles
+            Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
+                    .orElseGet(() -> {
+                        Role newUserRole = new Role(AppRole.ROLE_USER);
+                        return roleRepository.save(newUserRole);
+                    });
+
+            Role sellerRole = roleRepository.findByRoleName(AppRole.ROLE_SELLER)
+                    .orElseGet(() -> {
+                        Role newSellerRole = new Role(AppRole.ROLE_SELLER);
+                        return roleRepository.save(newSellerRole);
+                    });
+
+            Role adminRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
+                    .orElseGet(() -> {
+                        Role newAdminRole = new Role(AppRole.ROLE_ADMIN);
+                        return roleRepository.save(newAdminRole);
+                    });
+
+            Set<Role> userRoles = Set.of(userRole);
+            Set<Role> sellerRoles = Set.of(sellerRole);
+            Set<Role> adminRoles = Set.of(userRole, sellerRole, adminRole);
+
+            // Create users if not already present
+            if (!userRepository.existsByUserName("user1")) {
+                User user1 = new User("user1", "user1@example.com",
+                        passwordEncoder.encode("password1"));
+                userRepository.save(user1);
+            }
+
+            if (!userRepository.existsByUserName("seller1")) {
+                User seller1 = new User("seller1", "seller1@example.com",
+                        passwordEncoder.encode("password2"));
+                userRepository.save(seller1);
+            }
+
+            if (!userRepository.existsByUserName("admin")) {
+                User admin = new User("admin", "admin@example.com",
+                        passwordEncoder.encode("adminPass"));
+                userRepository.save(admin);
+            }
+
+            // Update roles for existing users
+            userRepository.findByUserName("user1").ifPresent(user -> {
+                user.setRoles(userRoles);
+                userRepository.save(user);
+            });
+
+            userRepository.findByUserName("seller1").ifPresent(seller -> {
+                seller.setRoles(sellerRoles);
+                userRepository.save(seller);
+            });
+
+            userRepository.findByUserName("admin").ifPresent(admin -> {
+                admin.setRoles(adminRoles);
+                userRepository.save(admin);
+            });
+        };
+    }
+
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.project.model.User;
-import com.example.project.repositories.UserRepository;
+import com.example.project.repository.UserRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

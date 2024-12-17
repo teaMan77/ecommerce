@@ -1,4 +1,4 @@
-package com.example.project.config;
+package com.example.project.controller;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -7,6 +7,7 @@ import com.example.project.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -39,6 +40,7 @@ public class CategoryController {
                 HttpStatus.OK);
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("admin/categories/{categoryId}")
     public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long categoryId) {
             return new ResponseEntity<>(categoryService.deleteCategory(categoryId),

@@ -1,5 +1,6 @@
 package com.example.project.security.jwt;
 
+import com.example.project.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -33,8 +34,9 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateTokenFromUsername(UserDetails userDetails) {
+    public String generateTokenFromUsername(UserDetailsImpl userDetails) {
         String username = userDetails.getUsername();
+
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())

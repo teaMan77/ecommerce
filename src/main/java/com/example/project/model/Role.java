@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
 @NoArgsConstructor
 @Table(name = "roles")
 public class Role {
@@ -30,4 +29,28 @@ public class Role {
     @ToString.Exclude
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new HashSet<>();
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
+
+    public AppRole getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(AppRole roleName) {
+        this.roleName = roleName;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
 }

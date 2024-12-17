@@ -157,4 +157,11 @@ public class AuthController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    @PostMapping("/signout")
+    public ResponseEntity<?> signOut() {
+        ResponseCookie cookie = jwtUtils.getCleanCookie();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE,
+                cookie.toString()).body(new MessageResponse("Signed out successfully!"));
+    }
 }

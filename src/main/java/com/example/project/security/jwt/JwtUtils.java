@@ -49,6 +49,11 @@ public class JwtUtils {
         return cookie;
     }
 
+    public ResponseCookie getCleanCookie() {
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
+        return cookie;
+    }
+
 //    public String getJwtFromHeader(HttpServletRequest request) {
 //        String bearerToken = request.getHeader("Authorization");
 //        logger.debug("Authorization Header: {}", bearerToken);

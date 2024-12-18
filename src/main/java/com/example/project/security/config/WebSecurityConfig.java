@@ -71,9 +71,10 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/v3/api-docs/**", "/h2-console/**",
-                                "/api/public/**", "/swagger-ui/**", "/api/test/**", "/images/**")
+                                 "/swagger-ui/**", "/api/test/**", "/images/**")
                         .permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/public/**").hasAnyRole("ADMIN", "USER", "SELLER")
+                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "USER", "SELLER")
                         .anyRequest().authenticated()
                 )
                 .headers(headers ->

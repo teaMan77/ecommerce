@@ -16,7 +16,9 @@ import com.example.project.payload.CartDTO;
 import com.example.project.repository.CartRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -92,6 +94,27 @@ public class CartServiceImpl implements CartService {
         cartDTO.setProducts(productDTOStream.toList());
 
         return cartDTO;
+    }
+
+    @Override
+    public List<CartDTO> getAllCarts() {
+        List<Cart> carts = cartRepository.findAll();
+
+        if (carts.isEmpty()) {
+            throw new APIException("No cart exists!!!");
+        }
+
+        List<CartDTO> cartDTOS = carts.stream()
+                .map(cart -> {CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+
+                    List<ProductDTO> productDTOS = cart.getCartItems().stream()
+                            .map(prod -> modelMapper.map(prod, ProductDTO.class)).toList();
+
+                    cartDTO.setProducts(productDTOS);
+                    return cartDTO;
+                }).toList();
+
+        return cartDTOS;
     }
 
     private Cart createCart() {
